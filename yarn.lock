@@ -2873,8 +2873,8 @@ jest-environment-node@^20.0.3:
     jest-util "^20.0.3"
 
 jest-expo@~19.0.0:
-  version "19.0.2"
-  resolved "https://registry.yarnpkg.com/jest-expo/-/jest-expo-19.0.2.tgz#5a1f1dd0d1ee8119fd9b90f8dcabd47d9d9f7188"
+  version "19.0.5"
+  resolved "https://registry.yarnpkg.com/jest-expo/-/jest-expo-19.0.5.tgz#0bf01366263565bb0e8f1ac299d4b69291b26521"
   dependencies:
     babel-jest "20.0.3"
     jest "20.0.4"
@@ -4390,6 +4390,10 @@ react-native-scripts@1.1.0:
     rimraf "^2.6.1"
     xdl "43.0.0"
 
+react-native-search-box@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-search-box/-/react-native-search-box-0.0.9.tgz#c1677e127d6d2b346850b031b2cb216447fa66f0"
+
 react-native-side-menu@^0.20.1:
   version "0.20.3"
   resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-0.20.3.tgz#5dffe3e237018360ed081433d505ea454cba9ca4"
@@ -5623,8 +5627,8 @@ which-module@^1.0.0:
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"
 
 which@^1.2.12, which@^1.2.9:
-  version "1.2.14"
-  resolved "https://registry.yarnpkg.com/which/-/which-1.2.14.tgz#9a87c4378f03e827cecaf1acdf56c736c01c14e5"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
   dependencies:
     isexe "^2.0.0"
 
