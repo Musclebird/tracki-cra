@@ -2,6 +2,7 @@ import { types, onSnapshot, onPatch } from 'mobx-state-tree';
 import { observable } from 'mobx-react';
 import { AsyncStorage } from 'react-native';
 import 'react-native-console-time-polyfill';
+import _ from 'lodash';
 const uuidv1 = require('uuid/v1');
 
 export const DrugTypeModel = types.model(
@@ -50,13 +51,13 @@ const DomainStore = types.model(
 		entries: types.array(EntryModel),
 
 		getDrugById(id) {
-			return this.drugs.filter(t => t.id === id)[0];
+			return _.find(this.drugs, t => t.id === id);
 		},
 		searchDrugsByName(name) {
 			if (!name || name.length == 0) {
 				return this.drugs;
 			}
-			return this.drugs.filter(t => t.name.toLowerCase().startsWith(name.toLowerCase()));
+			return _.filter(this.drugs, t => t.name.toLowerCase().startsWith(name.toLowerCase()));
 		}
 	},
 	{
