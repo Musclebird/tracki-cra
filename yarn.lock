@@ -4353,6 +4353,12 @@ react-native-elements@^0.15.0:
     react-native-side-menu "^0.20.1"
     react-native-tab-navigator "^0.3.3"
 
+"react-native-flip-card@git+https://github.com/brunocascio/react-native-flip-card.git":
+  version "3.4.1"
+  resolved "git+https://github.com/brunocascio/react-native-flip-card.git#6e1d71542c237d447d0e9497ab1362719ed731af"
+  dependencies:
+    prop-types "^15.5.10"
+
 "react-native-keyboard-aware-scroll-view@git+https://github.com/GeekyAnts/react-native-keyboard-aware-scroll-view.git":
   version "0.2.9"
   resolved "git+https://github.com/GeekyAnts/react-native-keyboard-aware-scroll-view.git#f4805f254d6cc8e3329f5fb224944401f66655db"

@@ -1,8 +1,11 @@
-import { types, onSnapshot, onPatch } from 'mobx-state-tree';
-import { observable } from 'mobx-react';
-import { AsyncStorage } from 'react-native';
 import 'react-native-console-time-polyfill';
+
+import { onPatch, onSnapshot, types } from 'mobx-state-tree';
+
+import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
+import { observable } from 'mobx-react';
+
 const uuidv1 = require('uuid/v1');
 
 export const DrugTypeModel = types.model(
@@ -58,6 +61,9 @@ const DomainStore = types.model(
                 return this.drugs;
             }
             return _.filter(this.drugs, (t) => t.name.toUpperCase().startsWith(name.toUpperCase()));
+        },
+        getEntryById(id) {
+            return _.find(this.entries, (t) => t.id === id);
         }
     },
     {
@@ -112,7 +118,7 @@ const DomainStore = types.model(
 
 const storeInstance = DomainStore.create({ drugs: [], entries: [] });
 
-<storeInstance className="fetchDrugs" />.then(() => {
+storeInstance.fetchDrugs().then(() => {
     onSnapshot(storeInstance, (snapshot) => {
         if (snapshot.storageEndpoint == 'asyncStorage' && snapshot.isLoaded) {
             console.time('asyncStorage');

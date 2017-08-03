@@ -1,27 +1,26 @@
-import {TabNavigator, StackNavigator} from "react-navigation";
-import AboutScreen from "../screens/AboutScreen";
-import CabinetScreen from "../screens/CabinetScreen";
-import CabinetFormScreen from "../screens/CabinetFormScreen";
-import {StyleSheet, Text, View, Color} from "react-native";
+import { AboutScreen, CabinetFormScreen, CabinetScreen, EntryScreen } from '../screens/';
+import { Color, StyleSheet, Text, View } from 'react-native';
+import { StackNavigator, TabNavigator } from 'react-navigation';
 
 let styles = StyleSheet.create({
     tabStyle: {
-        backgroundColor: "rgba(247, 247, 247, 255)"
+        backgroundColor: 'rgba(247, 247, 247, 255)'
     },
     headerStyle: {
-        backgroundColor: "rgba(247, 247, 247, 255)"
+        backgroundColor: 'rgba(247, 247, 247, 255)'
     }
 });
 
 const MainNavigator = TabNavigator(
     {
-        Cabinet: {screen: CabinetScreen},
-        About: {screen: AboutScreen}
+        Entries: { screen: EntryScreen },
+        Cabinet: { screen: CabinetScreen },
+        About: { screen: AboutScreen }
     },
     {
         tabBarOptions: {
             style: styles.tabStyle,
-            order: ["Entries", "Cabinet", "About"]
+            order: ['Entries', 'Cabinet', 'About']
         }
     }
 );
