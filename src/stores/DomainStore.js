@@ -31,6 +31,7 @@ export const DrugTypeModel = types.model(
 export const EntryModel = types.model(
     {
         id: types.identifier(),
+        timestamp: types.Date,
         drug: types.reference(DrugTypeModel),
         dose: types.number,
         notes: types.maybe(types.string),
@@ -64,7 +65,8 @@ const DomainStore = types.model(
         },
         getEntryById(id) {
             return _.find(this.entries, (t) => t.id === id);
-        }
+        },
+        getEntriesForDay(date) {}
     },
     {
         addDrugType(name, measurement, photo) {
