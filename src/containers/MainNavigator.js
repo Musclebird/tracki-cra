@@ -1,4 +1,11 @@
-import { AboutScreen, CabinetFormScreen, CabinetScreen, EntryScreen } from '../screens/';
+import {
+    AboutScreen,
+    CabinetFormScreen,
+    CabinetScreen,
+    CabinetSelectScreen,
+    EntryFormScreen,
+    EntryScreen
+} from '../screens/';
 import { Color, StyleSheet, Text, View } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
 
@@ -32,6 +39,12 @@ const MainStackWrapper = StackNavigator(
         },
         CabinetForm: {
             screen: CabinetFormScreen
+        },
+        CabinetSelect: {
+            screen: CabinetSelectScreen
+        },
+        EntryForm: {
+            screen: EntryFormScreen
         }
     },
     {

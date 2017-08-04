@@ -7,13 +7,30 @@ import _ from 'lodash';
 import { observable } from 'mobx-react';
 
 const uuidv1 = require('uuid/v1');
+const moment = require('moment');
+
+export const EntryModel = types.model({
+    timestamp: types.Date,
+    dose: types.number,
+    notes: types.maybe(types.string),
+    photo: types.maybe(types.string),
+    measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
+});
 
 export const DrugTypeModel = types.model(
     {
         id: types.identifier(),
         name: types.string,
         defaultMeasurement: types.string,
-        photo: types.maybe(types.string)
+        photo: types.maybe(types.string),
+        entries: types.array(EntryModel),
+        findLatestEntry() {
+            return _.orderBy(this.entries, ['timestamp'], ['desc'])[0];
+        },
+        getEntriesForDate(date) {
+            let dateMoment = moment(date);
+            return _.filter(this.entries, (t) => moment(t.date).isSame(dateMoment, 'day'));
+        }
     },
     {
         setName(name) {
@@ -24,24 +41,17 @@ export const DrugTypeModel = types.model(
         },
         setPhotoUri(uri) {
             this.photo = uri;
-        }
-    }
-);
-
-export const EntryModel = types.model(
-    {
-        id: types.identifier(),
-        timestamp: types.Date,
-        drug: types.reference(DrugTypeModel),
-        dose: types.number,
-        notes: types.maybe(types.string),
-        measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
-    },
-    {
-        setData(drug, dose, measurement) {
-            this.drug = drug;
-            this.dose = dose;
-            this.measurement = measurement;
+        },
+        addEntry(timestamp, dose, measurement, notes, photo) {
+            this.entries.push(
+                EntryModel.create({
+                    timestamp: timestamp,
+                    dose: dose,
+                    measurement: measurement,
+                    notes: notes,
+                    photo: photo
+                })
+            );
         }
     }
 );
@@ -52,7 +62,6 @@ const DomainStore = types.model(
         isLoaded: false,
         storageEndpoint: 'asyncStorage',
         drugs: types.array(DrugTypeModel),
-        entries: types.array(EntryModel),
 
         getDrugById(id) {
             return _.find(this.drugs, (t) => t.id === id);
@@ -65,13 +74,18 @@ const DomainStore = types.model(
         },
         getEntryById(id) {
             return _.find(this.entries, (t) => t.id === id);
-        },
-        getEntriesForDay(date) {}
+        }
     },
     {
         addDrugType(name, measurement, photo) {
             this.drugs.push(
-                DrugTypeModel.create({ id: uuidv1(), name: name, defaultMeasurement: measurement, photo: photo })
+                DrugTypeModel.create({
+                    id: uuidv1(),
+                    name: name,
+                    defaultMeasurement: measurement,
+                    photo: photo,
+                    entries: []
+                })
             );
         },
         removeDrugType(id) {

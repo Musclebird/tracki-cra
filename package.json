@@ -27,6 +27,7 @@
         "mobx": "^3.2.2",
         "mobx-react": "^4.2.2",
         "mobx-state-tree": "0.9.5",
+        "moment": "^2.18.1",
         "native-base": "^2.2.1",
         "react": "16.0.0-beta.2",
         "react-native": "https://github.com/expo/react-native/archive/sdk-19.0.0.tar.gz",

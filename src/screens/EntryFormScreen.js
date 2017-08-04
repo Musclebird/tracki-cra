@@ -6,18 +6,14 @@ import { Button } from 'react-native';
 import { default as DomainStore } from '../stores/DomainStore';
 import { ImagePicker } from 'expo';
 
-export default class CabinetFormScreen extends Component {
+export default class EntryFormScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         var editing = navigation.state.params && navigation.state.params.record;
         return {
-            title: editing ? `Edit ${navigation.state.params.record.name} ` : 'Add to Cabinet',
+            title: `${editing ? 'Edit' : 'Add'} ${navigation.state.params.drug.name} entry`,
             headerRight: (
                 <View>
-                    <Button
-                        title={editing ? 'Update' : 'Save'}
-                        //disabled={!navigation.state.params ? true : !navigation.state.params.saveEnabled}
-                        onPress={() => navigation.state.params.handleSave()}
-                    />
+                    <Button title={editing ? 'Update' : 'Save'} onPress={() => navigation.state.params.handleSave()} />
                 </View>
             )
         };
@@ -25,12 +21,15 @@ export default class CabinetFormScreen extends Component {
 
     constructor(props) {
         super(props);
+        let drug = props.navigation.state.params.drug;
         let record = props.navigation.state.params ? props.navigation.state.params.record : null;
         this.state = {
-            name: record ? record.name : null,
-            measurement: record ? record.defaultMeasurement : null,
+            drug: drug,
+            dose: record ? record.dose : null,
+            notes: record ? record.notes : null,
             photo: record ? record.photo : null,
-            record: record,
+            timestamp: record ? record.timestamp : new Date(),
+            measurement: record ? record.measurement : drug.defaultMeasurement,
             isEdit: record != null,
             isValid: true
         };
@@ -42,13 +41,22 @@ export default class CabinetFormScreen extends Component {
 
     onSave = () => {
         if (this.state.isValid) {
+            /*
             if (this.state.record) {
                 this.state.record.setName(this.state.name);
                 this.state.record.setMeasurement(this.state.measurement);
             } else {
                 DomainStore.addDrugType(this.state.name, this.state.measurement, this.state.photo);
-            }
-            this.props.navigation.goBack();
+            } */
+            console.log(this.state.drug);
+            this.state.drug.addEntry(
+                this.state.timestamp,
+                parseFloat(this.state.dose),
+                this.state.measurement,
+                this.state.notes,
+                this.state.photo
+            );
+            this.props.navigation.navigate('MainTabContainer');
         }
     };
 
@@ -72,11 +80,11 @@ export default class CabinetFormScreen extends Component {
                 <Form>
                     <Item>
                         <Input
-                            name="name"
+                            name="dose"
                             onChangeText={this.handleChange}
-                            placeholder="Drug Name"
-                            onChangeText={(text) => this.setState({ name: text })}
-                            value={this.state.name}
+                            placeholder="Dose"
+                            onChangeText={(text) => this.setState({ dose: text })}
+                            value={this.state.dose}
                         />
                     </Item>
                     <Item last>
@@ -84,7 +92,7 @@ export default class CabinetFormScreen extends Component {
                             name="measurement"
                             onChangeText={(text) => this.setState({ measurement: text })}
                             value={this.state.measurement}
-                            placeholder="Default Measurement"
+                            placeholder="Measurement"
                         />
                     </Item>
 

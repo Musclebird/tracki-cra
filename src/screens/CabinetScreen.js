@@ -44,6 +44,7 @@ export default class CabinetScreen extends React.Component {
         // Bind things now!
         this._navigateEditRecord = this._navigateEditRecord.bind(this);
         this._promptForDelete = this._promptForDelete.bind(this);
+        this._renderItem = this._renderItem.bind(this);
     }
 
     _navigateEditRecord(id) {
@@ -72,6 +73,21 @@ export default class CabinetScreen extends React.Component {
                 }
             ]);
         }
+    }
+
+    _renderItem(item) {
+        var storeEntry = this.state.store.getDrugById(item.id);
+        var lastEntry = storeEntry.findLatestEntry();
+        return (
+            <DrugCard
+                name={item.name}
+                measurement={item.defaultMeasurement}
+                photoUri={item.photo}
+                onPressEdit={() => this._navigateEditRecord(item.id)}
+                onPressDelete={() => this._promptForDelete(item.id)}
+                timestamp={lastEntry ? lastEntry.timestamp : null}
+            />
+        );
     }
 
     render() {
@@ -105,15 +121,7 @@ export default class CabinetScreen extends React.Component {
                 <FlatList
                     keyExtractor={(item) => item.id}
                     data={toJS(this.state.store.searchDrugsByName(this.state.search))}
-                    renderItem={({ item }) => (
-                        <DrugCard
-                            name={item.name}
-                            measurement={item.defaultMeasurement}
-                            photoUri={item.photo}
-                            onPressEdit={() => this._navigateEditRecord(item.id)}
-                            onPressDelete={() => this._promptForDelete(item.id)}
-                        />
-                    )}
+                    renderItem={({ item }) => this._renderItem(item)}
                 />
             </View>
         );
