@@ -9,13 +9,32 @@ import { observable } from 'mobx-react';
 const uuidv1 = require('uuid/v1');
 const moment = require('moment');
 
-export const EntryModel = types.model({
-    timestamp: types.Date,
-    dose: types.number,
-    notes: types.maybe(types.string),
-    photo: types.maybe(types.string),
-    measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
-});
+export const EntryModel = types.model(
+    {
+        timestamp: types.Date,
+        dose: types.number,
+        notes: types.maybe(types.string),
+        photo: types.maybe(types.string),
+        measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
+    },
+    {
+        setTimestamp(timestamp) {
+            this.timestamp = timestamp;
+        },
+        setDose(dose) {
+            this.dose = dose;
+        },
+        setNotes(notes) {
+            this.notes = notes;
+        },
+        setPhoto(photo) {
+            this.photo = photo;
+        },
+        setMeasurement(measurement) {
+            this.measurement = measurement;
+        }
+    }
+);
 
 export const DrugTypeModel = types.model(
     {

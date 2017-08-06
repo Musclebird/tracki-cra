@@ -42,21 +42,21 @@ export default class EntryFormScreen extends Component {
 
     onSave = () => {
         if (this.state.isValid) {
-            /*
             if (this.state.record) {
-                this.state.record.setName(this.state.name);
+                this.state.record.setTimestamp(this.state.timestamp);
+                this.state.record.setDose(this.state.dose);
+                this.state.record.setPhoto(this.state.photo);
+                this.state.record.setNotes(this.state.notes);
                 this.state.record.setMeasurement(this.state.measurement);
             } else {
-                DomainStore.addDrugType(this.state.name, this.state.measurement, this.state.photo);
-            } */
-            console.log(this.state.drug);
-            this.state.drug.addEntry(
-                this.state.timestamp,
-                parseFloat(this.state.dose),
-                this.state.measurement,
-                this.state.notes,
-                this.state.photo
-            );
+                this.state.drug.addEntry(
+                    this.state.timestamp,
+                    parseFloat(this.state.dose),
+                    this.state.measurement,
+                    this.state.notes,
+                    this.state.photo
+                );
+            }
             const resetAction = NavigationActions.reset({
                 index: 0,
                 actions: [NavigationActions.navigate({ routeName: 'MainTabContainer' })]
