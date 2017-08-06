@@ -39,10 +39,27 @@ export default class CabinetSelectScreen extends React.Component {
             search: ''
         };
         this._navigateToForm = this._navigateToForm.bind(this);
+        this._renderItem = this._renderItem.bind(this);
     }
 
     _navigateToForm(id) {
         this.props.navigation.navigate('EntryForm', { drug: this.state.store.getDrugById(id) });
+    }
+
+    _renderItem(item) {
+        var storeEntry = this.state.store.getDrugById(item.id);
+        var lastEntry = storeEntry.findLatestEntry();
+        return (
+            <DrugCard
+                name={item.name}
+                measurement={item.defaultMeasurement}
+                photoUri={item.photo}
+                onPress={() => {
+                    this._navigateToForm(item.id);
+                }}
+                timestamp={lastEntry ? lastEntry.timestamp : null}
+            />
+        );
     }
 
     render() {
@@ -76,17 +93,7 @@ export default class CabinetSelectScreen extends React.Component {
                 <FlatList
                     keyExtractor={(item) => item.id}
                     data={toJS(this.state.store.searchDrugsByName(this.state.search))}
-                    renderItem={({ item }) => (
-                        <DrugCard
-                            name={item.name}
-                            measurement={item.defaultMeasurement}
-                            photoUri={item.photo}
-                            onPress={() => {
-                                this._navigateToForm(item.id);
-                            }}
-                            timestamp={item.latestEntry ? item.latestEntry.timestamp : null}
-                        />
-                    )}
+                    renderItem={({ item }) => this._renderItem(item)}
                 />
             </View>
         );

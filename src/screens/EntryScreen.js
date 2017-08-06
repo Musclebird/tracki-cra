@@ -1,7 +1,7 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Body, Container, Icon, Left, List, ListItem, Right, Text, Thumbnail } from 'native-base';
+import { Button, StyleSheet, View } from 'react-native';
 
 import { default as DomainStore } from '../stores/DomainStore';
-import { Icon } from 'native-base';
 import React from 'react';
 import { Spinner } from 'native-base';
 import _ from 'lodash';
@@ -46,15 +46,37 @@ export default class EntryScreen extends React.Component {
         });
 
         return (
-            <View>
-                {todayEntry.map((x) => {
-                    return (
-                        <Text>
-                            {x[0].timestamp.toString()} {x[1].name}
-                        </Text>
-                    );
-                })}
-            </View>
+            <Container>
+                <List>
+                    {todayEntry.map((x) => {
+                        var photoUri = x[0].photo || x[1].photo || null;
+                        return (
+                            <ListItem
+                                key={x[0].timestamp.getTime()}
+                                avatar={photoUri != null}
+                                onPress={() => {
+                                    this.props.navigation.navigate('EntryForm', { record: x[0], drug: x[1] });
+                                }}
+                            >
+                                {photoUri ? (
+                                    <Left>
+                                        <Thumbnail small source={{ uri: photoUri }} />
+                                    </Left>
+                                ) : null}
+                                <Body>
+                                    <Text>{x[1].name}</Text>
+                                    <Text note>{x[0].timestamp.toLocaleTimeString()}</Text>
+                                </Body>
+                                <Right>
+                                    <Text note>
+                                        {x[0].dose} {x[0].measurement}
+                                    </Text>
+                                </Right>
+                            </ListItem>
+                        );
+                    })}
+                </List>
+            </Container>
         );
     }
 }

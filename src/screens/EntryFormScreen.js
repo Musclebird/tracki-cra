@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native';
 import { default as DomainStore } from '../stores/DomainStore';
 import { ImagePicker } from 'expo';
+import { NavigationActions } from 'react-navigation';
 
 export default class EntryFormScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -25,7 +26,7 @@ export default class EntryFormScreen extends Component {
         let record = props.navigation.state.params ? props.navigation.state.params.record : null;
         this.state = {
             drug: drug,
-            dose: record ? record.dose : null,
+            dose: record ? record.dose.toString() : null,
             notes: record ? record.notes : null,
             photo: record ? record.photo : null,
             timestamp: record ? record.timestamp : new Date(),
@@ -56,7 +57,11 @@ export default class EntryFormScreen extends Component {
                 this.state.notes,
                 this.state.photo
             );
-            this.props.navigation.navigate('MainTabContainer');
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'MainTabContainer' })]
+            });
+            this.props.navigation.dispatch(resetAction);
         }
     };
 
