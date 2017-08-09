@@ -59,8 +59,8 @@ PhotoButton = (props) => {
 };
 
 PhotoButton.propTypes = {
-    height: PropType.number,
-    width: PropType.number,
+    height: PropType.oneOfType([PropType.number, PropType.string]),
+    width: PropType.oneOfType([PropType.number, PropType.string]),
     borderWidth: PropType.number,
     padding: PropType.number,
     photo: PropType.string,

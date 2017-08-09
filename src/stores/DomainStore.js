@@ -15,6 +15,7 @@ export const EntryModel = types.model(
         dose: types.number,
         notes: types.maybe(types.string),
         photo: types.maybe(types.string),
+        routeOfAdministration: types.maybe(types.string),
         measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
     },
     {
@@ -43,6 +44,10 @@ export const EntryModel = types.model(
         },
         setMeasurement(measurement) {
             this.measurement = measurement;
+            return this;
+        },
+        setRouteOfAdministration(roa) {
+            this.routeOfAdministration = roa;
             return this;
         }
     }
@@ -106,6 +111,11 @@ export const DrugTypeModel = types.model(
                 notes: notes,
                 photo: photo
             });
+            this.entries.push(entry);
+            return this.entry;
+        },
+        addEntryFromData(data) {
+            var entry = EntryModel.create(data);
             this.entries.push(entry);
             return this.entry;
         }

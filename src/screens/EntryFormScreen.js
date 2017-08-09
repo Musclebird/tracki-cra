@@ -1,11 +1,14 @@
-import { Container, Content, Form, Header, Input, Item } from 'native-base';
+import { ActionSheet, Container, Content, Form, Header, Input, Item, Label } from 'native-base';
+import { Col, Grid, Row } from 'react-native-easy-grid';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from 'react-native';
+import DatePicker from 'react-native-datepicker';
 import { default as DomainStore } from '../stores/DomainStore';
 import { ImagePicker } from 'expo';
 import { NavigationActions } from 'react-navigation';
+import PhotoButton from '../components/PhotoButton';
 
 export default class EntryFormScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -26,13 +29,15 @@ export default class EntryFormScreen extends Component {
         let record = props.navigation.state.params ? props.navigation.state.params.record : null;
         this.state = {
             drug: drug,
-            dose: record ? record.dose.toString() : null,
+            dose: record ? record.dose.toString() : drug.defaultDose.toString(),
             notes: record ? record.notes : null,
             photo: record ? record.photo : null,
             timestamp: record ? record.timestamp : new Date(),
             measurement: record ? record.measurement : drug.defaultMeasurement,
+            routeOfAdministration: record ? record.routeOfAdministration : drug.defaultRouteOfAdministration,
             isEdit: record != null,
-            isValid: true
+            isValid: true,
+            record: this.record
         };
     }
 
@@ -42,22 +47,18 @@ export default class EntryFormScreen extends Component {
 
     onSave = () => {
         if (this.state.isValid) {
+            var entryData = {
+                timestamp: this.state.timestamp,
+                dose: parseFloat(this.state.dose),
+                photo: this.state.photo,
+                routeOfAdministration: this.state.routeOfAdministration,
+                measurement: this.state.measurement,
+                notes: this.state.notes
+            };
             if (this.state.record) {
-                this.state.record.set({
-                    timestamp: this.state.timestamp,
-                    dose: parseFloat(this.state.dose),
-                    photo: this.state.photo,
-                    notes: this.state.notes,
-                    measurement: this.state.measurement
-                });
+                this.state.record.set(entryData);
             } else {
-                this.state.drug.addEntry(
-                    this.state.timestamp,
-                    parseFloat(this.state.dose),
-                    this.state.measurement,
-                    this.state.notes,
-                    this.state.photo
-                );
+                this.state.drug.addEntryFromData(entryData);
             }
             const resetAction = NavigationActions.reset({
                 index: 0,
@@ -76,13 +77,37 @@ export default class EntryFormScreen extends Component {
     };
 
     addPhoto = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true
-        });
+        ActionSheet.show(
+            {
+                options: ['Take a photo', 'Choose from library', 'Remove photo', 'Cancel'],
+                cancelButtonIndex: 3,
+                destructiveButtonIndex: 2,
+                title: 'Assign a photo to this entry'
+            },
+            async (index) => {
+                var launchMethod = null;
+                switch (index) {
+                    case 0:
+                        launchMethod = ImagePicker.launchCameraAsync;
+                        break;
+                    case 1:
+                        launchMethod = ImagePicker.launchImageLibraryAsync;
+                        break;
+                    case 2:
+                        this.setState({ photo: null });
+                        return;
+                    case 3:
+                        return;
+                }
+                let result = await launchMethod({
+                    allowsEditing: true
+                });
 
-        if (!result.cancelled) {
-            this.setState({ photo: result.uri });
-        }
+                if (!result.cancelled) {
+                    this.setState({ photo: result.uri });
+                }
+            }
+        );
     };
 
     validate() {
@@ -92,31 +117,97 @@ export default class EntryFormScreen extends Component {
     render() {
         return (
             <Content>
+                <Row>
+                    <Col>
+                        <PhotoButton
+                            photo={this.state.photo}
+                            onPress={() => this.addPhoto()}
+                            width="100%"
+                            height={140}
+                        />
+                    </Col>
+                </Row>
                 <Form>
-                    <Item>
-                        <Input
-                            name="dose"
-                            onChangeText={this.handleChange}
-                            placeholder="Dose"
-                            onChangeText={(text) => this.setState({ dose: text })}
-                            value={this.state.dose}
-                        />
-                    </Item>
-                    <Item last>
-                        <Input
-                            name="measurement"
-                            onChangeText={(text) => this.setState({ measurement: text })}
-                            value={this.state.measurement}
-                            placeholder="Measurement"
-                        />
-                    </Item>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Amount</Label>
+                                <Input
+                                    name="dose"
+                                    onChangeText={this.handleChange}
+                                    placeholder="What dose?"
+                                    onChangeText={(text) => this.setState({ dose: text })}
+                                    value={this.state.dose}
+                                />
+                            </Item>
+                        </Col>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Measurement</Label>
+                                <Input
+                                    name="measurement"
+                                    onChangeText={(text) => this.setState({ measurement: text })}
+                                    value={this.state.measurement}
+                                    placeholder="What unit of measurement?"
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Route of Administration</Label>
+                                <Input
+                                    onChangeText={(text) => this.setState({ routeOfAdministration: text })}
+                                    value={this.state.routeOfAdministration}
+                                    placeholder="How was it consumed?"
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Time of entry</Label>
 
-                    <Button
-                        title="Add Photo"
-                        onPress={() => {
-                            this.addPhoto();
-                        }}
-                    />
+                                <DatePicker
+                                    date={this.state.timestamp}
+                                    mode="datetime"
+                                    placeholder="select date"
+                                    confirmBtnText="Confirm"
+                                    showIcon={false}
+                                    style={{
+                                        alignSelf: 'stretch',
+                                        width: '100%'
+                                    }}
+                                    duration={200}
+                                    minDate="2016-01-01"
+                                    maxDate={new Date()}
+                                    cancelBtnText="Cancel"
+                                    onDateChange={(date) => {
+                                        this.setState({ timestamp: date });
+                                    }}
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel last underline={false}>
+                                <Label>Notes</Label>
+                                <Input
+                                    ref="notesInput"
+                                    name="notes"
+                                    multiline
+                                    placeholder="Any notes about this entry in particular?"
+                                    style={{ minHeight: 40 }}
+                                    onChangeText={(text) => this.setState({ notes: text })}
+                                    value={this.state.notes}
+                                    returnKeyType={'done'}
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
                 </Form>
             </Content>
         );

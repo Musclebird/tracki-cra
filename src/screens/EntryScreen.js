@@ -6,7 +6,9 @@ import { default as DomainStore } from '../stores/DomainStore';
 import React from 'react';
 import { Spinner } from 'native-base';
 import _ from 'lodash';
+import { observer } from 'mobx-react';
 
+@observer
 export default class EntryScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         title: 'Entries',

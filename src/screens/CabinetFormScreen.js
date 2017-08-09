@@ -1,5 +1,5 @@
-import { Col, Grid, Row } from 'react-native-easy-grid';
 import {
+    ActionSheet,
     Container,
     Content,
     Form,
@@ -11,6 +11,7 @@ import {
     Button as NativeButton,
     Thumbnail
 } from 'native-base';
+import { Col, Grid, Row } from 'react-native-easy-grid';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -49,12 +50,13 @@ export default class CabinetFormScreen extends Component {
             notes: record ? record.notes : null,
             record: record,
             isEdit: record != null,
-            isValid: false
+            isValid: record ? true : false
         };
     }
 
     componentDidMount() {
         this.props.navigation.setParams({
+            saveEnabled: this.state.isValid,
             saveHandler: this.onSave
         });
     }
@@ -80,13 +82,37 @@ export default class CabinetFormScreen extends Component {
     };
 
     addPhoto = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true
-        });
+        ActionSheet.show(
+            {
+                options: ['Take a photo', 'Choose from library', 'Remove photo', 'Cancel'],
+                cancelButtonIndex: 3,
+                destructiveButtonIndex: 2,
+                title: this.state.name ? 'Assign a photo to ' + this.state.name : 'Assign a photo'
+            },
+            async (index) => {
+                var launchMethod = null;
+                switch (index) {
+                    case 0:
+                        launchMethod = ImagePicker.launchCameraAsync;
+                        break;
+                    case 1:
+                        launchMethod = ImagePicker.launchImageLibraryAsync;
+                        break;
+                    case 2:
+                        this.setState({ photo: null });
+                        return;
+                    case 3:
+                        return;
+                }
+                let result = await launchMethod({
+                    allowsEditing: true
+                });
 
-        if (!result.cancelled) {
-            this.setState({ photo: result.uri });
-        }
+                if (!result.cancelled) {
+                    this.setState({ photo: result.uri });
+                }
+            }
+        );
     };
 
     onFormChange(data) {
