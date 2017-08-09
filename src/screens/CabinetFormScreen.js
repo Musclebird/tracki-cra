@@ -1,10 +1,23 @@
-import { Container, Content, Form, Header, Input, Item } from 'native-base';
+import { Col, Grid, Row } from 'react-native-easy-grid';
+import {
+    Container,
+    Content,
+    Form,
+    Header,
+    Icon,
+    Input,
+    Item,
+    Label,
+    Button as NativeButton,
+    Thumbnail
+} from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from 'react-native';
 import { default as DomainStore } from '../stores/DomainStore';
 import { ImagePicker } from 'expo';
+import PhotoButton from '../components/PhotoButton';
 
 export default class CabinetFormScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -28,8 +41,11 @@ export default class CabinetFormScreen extends Component {
         let record = props.navigation.state.params ? props.navigation.state.params.record : null;
         this.state = {
             name: record ? record.name : null,
-            measurement: record ? record.defaultMeasurement : null,
+            defaultMeasurement: record ? record.defaultMeasurement : null,
             photo: record ? record.photo : null,
+            defaultDose: record ? record.defaultDose.toString() : null,
+            defaultRouteOfAdministration: record ? record.defaultRouteOfAdministration : null,
+            notes: record ? record.notes : null,
             record: record,
             isEdit: record != null,
             isValid: true
@@ -42,11 +58,19 @@ export default class CabinetFormScreen extends Component {
 
     onSave = () => {
         if (this.state.isValid) {
+            let drugState = {
+                name: this.state.name,
+                defaultMeasurement: this.state.defaultMeasurement,
+                defaultDose: parseFloat(this.state.defaultDose),
+                defaultRouteOfAdministration: this.state.defaultRouteOfAdministration,
+                notes: this.state.notes,
+                photo: this.state.photo
+            };
+
             if (this.state.record) {
-                this.state.record.setName(this.state.name);
-                this.state.record.setMeasurement(this.state.measurement);
+                this.state.record.set(drugState);
             } else {
-                DomainStore.addDrugType(this.state.name, this.state.measurement, this.state.photo);
+                DomainStore.addDrugTypeFromData(drugState);
             }
             this.props.navigation.goBack();
         }
@@ -62,38 +86,86 @@ export default class CabinetFormScreen extends Component {
         }
     };
 
-    validate() {
-        console.log('Validating state:', this.state);
-    }
+    validate() {}
 
     render() {
         return (
             <Content>
                 <Form>
-                    <Item>
-                        <Input
-                            name="name"
-                            onChangeText={this.handleChange}
-                            placeholder="Drug Name"
-                            onChangeText={(text) => this.setState({ name: text })}
-                            value={this.state.name}
-                        />
-                    </Item>
-                    <Item last>
-                        <Input
-                            name="measurement"
-                            onChangeText={(text) => this.setState({ measurement: text })}
-                            value={this.state.measurement}
-                            placeholder="Default Measurement"
-                        />
-                    </Item>
-
-                    <Button
-                        title="Add Photo"
-                        onPress={() => {
-                            this.addPhoto();
-                        }}
-                    />
+                    <Row>
+                        <Col style={{ width: 120 }}>
+                            <PhotoButton
+                                circle={true}
+                                photo={this.state.photo}
+                                height={120}
+                                width={120}
+                                onPress={() => {
+                                    this.addPhoto();
+                                }}
+                                padding={5}
+                                borderWidth={0}
+                                background="#e0dfe5"
+                            />
+                        </Col>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Name</Label>
+                                <Input
+                                    name="name"
+                                    onChangeText={this.handleChange}
+                                    onChangeText={(text) => this.setState({ name: text })}
+                                    value={this.state.name}
+                                    placeholder="Soma"
+                                />
+                            </Item>
+                            <Item stackedLabel>
+                                <Label>Default Measurement</Label>
+                                <Input
+                                    name="measurement"
+                                    onChangeText={(text) => this.setState({ defaultMeasurement: text })}
+                                    value={this.state.defaultMeasurement}
+                                    placeholder="mg"
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel>
+                                <Label>Default amount</Label>
+                                <Input
+                                    name="defaultDose"
+                                    onChangeText={(text) => this.setState({ defaultDose: text })}
+                                    value={this.state.defaultDose}
+                                    placeholder="What is your normal dose?"
+                                />
+                            </Item>
+                            <Item stackedLabel>
+                                <Label>Default RoA</Label>
+                                <Input
+                                    name="roa"
+                                    onChangeText={(text) => this.setState({ defaultRouteOfAdministration: text })}
+                                    value={this.state.defaultRouteOfAdministration}
+                                    placeholder="How do you normally consume it? e.g. Oral, IV"
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Item stackedLabel last underline={false}>
+                                <Label>Notes</Label>
+                                <Input
+                                    name="notes"
+                                    multiline
+                                    placeholder="Any notes about this drug in particular?"
+                                    style={{ minHeight: 40 }}
+                                    onChangeText={(text) => this.setState({ notes: text })}
+                                    value={this.state.notes}
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
                 </Form>
             </Content>
         );

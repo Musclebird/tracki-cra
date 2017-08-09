@@ -36,6 +36,7 @@ export default class EntryScreen extends React.Component {
         this.state.store.drugs.map((drug) => {
             drug.getEntriesForDate(new Date()).map((x) => {
                 if (x) {
+                    console.log(x);
                     todayEntry.push([x, drug]);
                 }
             });

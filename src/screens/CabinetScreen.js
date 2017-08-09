@@ -61,17 +61,21 @@ export default class CabinetScreen extends React.Component {
     _promptForDelete(id) {
         var storeRecord = this.state.store.getDrugById(id);
         if (storeRecord) {
-            Alert.alert('Confirm Delete', `Are you sure you want to delete ${storeRecord.name}?`, [
-                {
-                    text: 'Cancel',
-                    style: 'cancel'
-                },
-                {
-                    text: 'OK',
-                    onPress: () => this.state.store.removeDrugType(storeRecord.id),
-                    style: 'destructive'
-                }
-            ]);
+            Alert.alert(
+                'Confirm Delete',
+                `Are you sure you want to delete ${storeRecord.name}? All associated entries will be deleted as well!`,
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel'
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => this.state.store.removeDrugType(storeRecord.id),
+                        style: 'destructive'
+                    }
+                ]
+            );
         }
     }
 

@@ -43,11 +43,13 @@ export default class EntryFormScreen extends Component {
     onSave = () => {
         if (this.state.isValid) {
             if (this.state.record) {
-                this.state.record.setTimestamp(this.state.timestamp);
-                this.state.record.setDose(this.state.dose);
-                this.state.record.setPhoto(this.state.photo);
-                this.state.record.setNotes(this.state.notes);
-                this.state.record.setMeasurement(this.state.measurement);
+                this.state.record.set({
+                    timestamp: this.state.timestamp,
+                    dose: parseFloat(this.state.dose),
+                    photo: this.state.photo,
+                    notes: this.state.notes,
+                    measurement: this.state.measurement
+                });
             } else {
                 this.state.drug.addEntry(
                     this.state.timestamp,
@@ -63,6 +65,14 @@ export default class EntryFormScreen extends Component {
             });
             this.props.navigation.dispatch(resetAction);
         }
+    };
+
+    onDelete = () => {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'MainTabContainer' })]
+        });
+        this.props.navigation.dispatch(resetAction);
     };
 
     addPhoto = async () => {

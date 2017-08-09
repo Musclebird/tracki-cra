@@ -18,20 +18,32 @@ export const EntryModel = types.model(
         measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
     },
     {
+        set(data) {
+            for (var key in data) {
+                if (this.hasOwnProperty(key)) {
+                    this[key] = data[key];
+                }
+            }
+        },
         setTimestamp(timestamp) {
             this.timestamp = timestamp;
+            return this;
         },
         setDose(dose) {
             this.dose = dose;
+            return this;
         },
         setNotes(notes) {
             this.notes = notes;
+            return this;
         },
         setPhoto(photo) {
             this.photo = photo;
+            return this;
         },
         setMeasurement(measurement) {
             this.measurement = measurement;
+            return this;
         }
     }
 );
@@ -42,35 +54,60 @@ export const DrugTypeModel = types.model(
         name: types.string,
         defaultMeasurement: types.string,
         photo: types.maybe(types.string),
+        defaultDose: types.maybe(types.number),
+        defaultRouteOfAdministration: types.maybe(types.string),
+        notes: types.maybe(types.string),
         entries: types.array(EntryModel),
         findLatestEntry() {
             return _.orderBy(this.entries, ['timestamp'], ['desc'])[0];
         },
         getEntriesForDate(date) {
             let dateMoment = moment(date);
-            return _.filter(this.entries, (t) => moment(t.date).isSame(dateMoment, 'day'));
+            return _.filter(this.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
         }
     },
     {
+        set(data) {
+            for (var key in data) {
+                if (this.hasOwnProperty(key)) {
+                    this[key] = data[key];
+                }
+            }
+        },
         setName(name) {
             this.name = name;
+            return this;
         },
         setMeasurement(measurement) {
             this.defaultMeasurement = measurement;
+            return this;
         },
         setPhotoUri(uri) {
             this.photo = uri;
+            return this;
+        },
+        setDefaultDose(dose) {
+            this.defaultDose = dose;
+            return this;
+        },
+        setDefaultRouteOfAdministration(roa) {
+            this.defaultRouteOfAdministration = roa;
+            return this;
+        },
+        setNotes(notes) {
+            this.notes = notes;
+            return this;
         },
         addEntry(timestamp, dose, measurement, notes, photo) {
-            this.entries.push(
-                EntryModel.create({
-                    timestamp: timestamp,
-                    dose: dose,
-                    measurement: measurement,
-                    notes: notes,
-                    photo: photo
-                })
-            );
+            var entry = EntryModel.create({
+                timestamp: timestamp,
+                dose: dose,
+                measurement: measurement,
+                notes: notes,
+                photo: photo
+            });
+            this.entries.push(entry);
+            return this.entry;
         }
     }
 );
@@ -96,6 +133,13 @@ const DomainStore = types.model(
         }
     },
     {
+        addDrugTypeFromData(data) {
+            let dataClone = { ...data };
+            dataClone['id'] = uuidv1();
+            dataClone['entries'] = [];
+            let newRecord = DrugTypeModel.create(dataClone);
+            return newRecord;
+        },
         addDrugType(name, measurement, photo) {
             this.drugs.push(
                 DrugTypeModel.create({
@@ -113,6 +157,11 @@ const DomainStore = types.model(
         clearAll() {
             // BE CAREFUL WITH THIS! SERIOUSLY!
             this.drugs.clear();
+        },
+        clearAllEntries() {
+            for (var drug in this.drugs) {
+                drug.entries = [];
+            }
         },
         debugMassAdd(amount) {
             console.time('massAdd' + amount);
