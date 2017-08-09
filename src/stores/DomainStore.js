@@ -138,6 +138,7 @@ const DomainStore = types.model(
             dataClone['id'] = uuidv1();
             dataClone['entries'] = [];
             let newRecord = DrugTypeModel.create(dataClone);
+            this.drugs.push(newRecord);
             return newRecord;
         },
         addDrugType(name, measurement, photo) {

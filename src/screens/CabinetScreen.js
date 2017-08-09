@@ -126,6 +126,7 @@ export default class CabinetScreen extends React.Component {
                     keyExtractor={(item) => item.id}
                     data={toJS(this.state.store.searchDrugsByName(this.state.search))}
                     renderItem={({ item }) => this._renderItem(item)}
+                    ListFooterComponent={() => <View style={{ height: 50 }} />}
                 />
             </View>
         );
