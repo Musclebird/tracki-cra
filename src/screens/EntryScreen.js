@@ -1,6 +1,7 @@
-import { Body, Container, Icon, Left, List, ListItem, Right, Text, Thumbnail } from 'native-base';
+import { Body, Container, Content, Icon, Left, List, ListItem, Right, Text, Thumbnail } from 'native-base';
 import { Button, StyleSheet, View } from 'react-native';
 
+import DatePicker from 'react-native-datepicker';
 import { default as DomainStore } from '../stores/DomainStore';
 import React from 'react';
 import { Spinner } from 'native-base';
@@ -24,7 +25,8 @@ export default class EntryScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            store: DomainStore
+            store: DomainStore,
+            selectedDate: new Date()
         };
     }
 
@@ -34,9 +36,8 @@ export default class EntryScreen extends React.Component {
         }
         var todayEntry = [];
         this.state.store.drugs.map((drug) => {
-            drug.getEntriesForDate(new Date()).map((x) => {
+            drug.getEntriesForDate(this.state.selectedDate).map((x) => {
                 if (x) {
-                    console.log(x);
                     todayEntry.push([x, drug]);
                 }
             });
@@ -47,7 +48,25 @@ export default class EntryScreen extends React.Component {
         });
 
         return (
-            <Container>
+            <Content>
+                <DatePicker
+                    date={this.state.selectedDate}
+                    mode="date"
+                    placeholder="select date"
+                    confirmBtnText="Confirm"
+                    showIcon={false}
+                    style={{
+                        alignSelf: 'stretch',
+                        width: '100%'
+                    }}
+                    duration={200}
+                    minDate="2016-01-01"
+                    maxDate={new Date()}
+                    cancelBtnText="Cancel"
+                    onDateChange={(date) => {
+                        this.setState({ selectedDate: date });
+                    }}
+                />
                 <List>
                     {todayEntry.map((x) => {
                         var photoUri = x[0].photo || x[1].photo || null;
@@ -77,7 +96,7 @@ export default class EntryScreen extends React.Component {
                         );
                     })}
                 </List>
-            </Container>
+            </Content>
         );
     }
 }

@@ -81,7 +81,7 @@ export default class CabinetSelectScreen extends React.Component {
             );
         }
         return (
-            <View>
+            <Content>
                 <Item>
                     <Icon name="ios-search" />
                     <Input
@@ -95,7 +95,7 @@ export default class CabinetSelectScreen extends React.Component {
                     data={toJS(this.state.store.searchDrugsByName(this.state.search))}
                     renderItem={({ item }) => this._renderItem(item)}
                 />
-            </View>
+            </Content>
         );
     }
 }
