@@ -54,7 +54,7 @@ class DrugCard extends Component {
                                     </Text>
                                 </Body>
                                 <Right>
-                                    {this.props.statistics ? (
+                                    {this.props.children ? (
                                         <Button primary transparent onPress={() => this.setState({ flip: true })}>
                                             <Icon name="ios-information-circle-outline" />
                                         </Button>
@@ -102,18 +102,7 @@ class DrugCard extends Component {
                                     <Text header>{this.props.name} statistics</Text>
                                 </Right>
                             </CardItem>
-                            <CardItem cardBody>
-                                {this.props.statistics ? <this.props.statistics /> : null}
-                                <Body>
-                                    <Image
-                                        source={{
-                                            uri: this.photoUri
-                                        }}
-                                        style={{ height: 200, width: null, flex: 1 }}
-                                    />
-                                </Body>
-                            </CardItem>
-                            <CardItem />
+                            <CardItem cardBody>{this.props.children}</CardItem>
                         </Card>
                     </FlipCard>
                 </View>

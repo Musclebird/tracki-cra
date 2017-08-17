@@ -23,6 +23,7 @@ import { default as DomainStore } from '../stores/DomainStore';
 import DrugCard from '../components/DrugCard';
 import { NavigationActions } from 'react-navigation';
 import React from 'react';
+import Statistics from '../components/Statistics';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 
@@ -90,7 +91,9 @@ export default class CabinetScreen extends React.Component {
                 onPressEdit={() => this._navigateEditRecord(item.id)}
                 onPressDelete={() => this._promptForDelete(item.id)}
                 timestamp={lastEntry ? lastEntry.timestamp : null}
-            />
+            >
+                <Statistics />
+            </DrugCard>
         );
     }
 
@@ -112,6 +115,25 @@ export default class CabinetScreen extends React.Component {
                 </Container>
             );
         }
+
+        if (this.state.store.drugs.length <= 0) {
+            return (
+                <Container
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text>You have nothing in your cabinet.</Text>
+                    <View>
+                        <NativeBaseButton transparent onPress={() => this.props.navigation.navigate('CabinetForm')}>
+                            <Text>Add your first drug?</Text>
+                        </NativeBaseButton>
+                    </View>
+                </Container>
+            );
+        }
+
         return (
             <View>
                 <Item>

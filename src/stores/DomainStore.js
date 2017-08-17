@@ -69,6 +69,19 @@ export const DrugTypeModel = types.model(
         getEntriesForDate(date) {
             let dateMoment = moment(date);
             return _.filter(this.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
+        },
+        getAverageTimeBetweenEntries(count) {
+            if (count > entries.length) {
+                count = entries.length;
+            }
+
+            let sortedEntries = _.sortBy(this.entries, (x) => x.timestamp);
+            let timeBetween =
+                (_.last(sortedEntries).timestamp - sortedEntries[count - entries.length].timestamp) /
+                (sortedEntries.length - 1) /
+                1000.0;
+
+            return timeBetween;
         }
     },
     {

@@ -1,4 +1,4 @@
-import { ActionSheet, Container, Content, Form, Header, Input, Item, Label } from 'native-base';
+import { ActionSheet, Container, Content, Form, Header, Input, Item, Label, Button as NativeButton } from 'native-base';
 import { Col, Grid, Row } from 'react-native-easy-grid';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -37,7 +37,7 @@ export default class EntryFormScreen extends Component {
             routeOfAdministration: record ? record.routeOfAdministration : drug.defaultRouteOfAdministration,
             isEdit: record != null,
             isValid: true,
-            record: this.record
+            record: record
         };
     }
 
@@ -206,6 +206,11 @@ export default class EntryFormScreen extends Component {
                                     returnKeyType={'done'}
                                 />
                             </Item>
+                            {this.state.record ? (
+                                <NativeButton onPress={() => this.deleteRecord()}>
+                                    <Text> Delete</Text>
+                                </NativeButton>
+                            ) : null}
                         </Col>
                     </Row>
                 </Form>

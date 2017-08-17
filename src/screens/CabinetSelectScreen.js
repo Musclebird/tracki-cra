@@ -80,6 +80,18 @@ export default class CabinetSelectScreen extends React.Component {
                 </Container>
             );
         }
+        if (this.state.store.drugs.length <= 0) {
+            return (
+                <Container
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text>You have nothing in your cabinet.</Text>
+                </Container>
+            );
+        }
         return (
             <Content>
                 <Item>
