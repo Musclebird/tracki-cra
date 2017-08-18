@@ -94,15 +94,17 @@ class DrugCard extends Component {
                         <Card>
                             <CardItem>
                                 <Left>
-                                    <Button primary transparent onPress={() => this.setState({ flip: false })}>
-                                        <Icon name="ios-arrow-back" />
-                                    </Button>
-                                </Left>
-                                <Right>
                                     <Text header>{this.props.name} statistics</Text>
+                                </Left>
+
+                                <Right>
+                                    <Button primary transparent onPress={() => this.setState({ flip: false })}>
+                                        <Icon name="ios-close" />
+                                    </Button>
                                 </Right>
                             </CardItem>
                             <CardItem cardBody>{this.props.children}</CardItem>
+                            <CardItem />
                         </Card>
                     </FlipCard>
                 </View>

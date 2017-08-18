@@ -92,7 +92,16 @@ export default class CabinetScreen extends React.Component {
                 onPressDelete={() => this._promptForDelete(item.id)}
                 timestamp={lastEntry ? lastEntry.timestamp : null}
             >
-                <Statistics />
+                <View>
+                    <Text>
+                        Avg time between use: {(storeEntry.getAverageTimeBetweenEntries(20) / 60 / 60 / 24).toFixed(2)}
+                        days
+                    </Text>
+                    <Text>
+                        Longest time between use:
+                        {(storeEntry.getLongestTimeBetweenEntries() / 60 / 60 / 24).toFixed(2)} days
+                    </Text>
+                </View>
             </DrugCard>
         );
     }

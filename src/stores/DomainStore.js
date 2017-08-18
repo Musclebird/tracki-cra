@@ -71,17 +71,28 @@ export const DrugTypeModel = types.model(
             return _.filter(this.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
         },
         getAverageTimeBetweenEntries(count) {
-            if (count > entries.length) {
-                count = entries.length;
+            if (count > this.entries.length) {
+                count = this.entries.length;
             }
 
             let sortedEntries = _.sortBy(this.entries, (x) => x.timestamp);
             let timeBetween =
-                (_.last(sortedEntries).timestamp - sortedEntries[count - entries.length].timestamp) /
+                (_.last(sortedEntries).timestamp - sortedEntries[count - this.entries.length].timestamp) /
                 (sortedEntries.length - 1) /
                 1000.0;
 
             return timeBetween;
+        },
+        getLongestTimeBetweenEntries() {
+            let sortedEntries = _.sortBy(this.entries, (x) => x.timestamp);
+            let longestTime = 0;
+            for (var i = sortedEntries.length - 1; i > 0; i--) {
+                let time = sortedEntries[i].timestamp - sortedEntries[i - 1].timestamp;
+                if (time > longestTime) {
+                    longestTime = time;
+                }
+            }
+            return longestTime / 1000.0;
         }
     },
     {
