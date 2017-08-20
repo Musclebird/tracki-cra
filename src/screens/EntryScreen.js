@@ -33,7 +33,7 @@ export default class EntryScreen extends React.Component {
     }
 
     render() {
-        if (!this.state.store.isLoaded) {
+        if (this.state.store.isLoading) {
             return <Spinner />;
         }
         var todayEntry = [];

@@ -1,6 +1,6 @@
 import 'react-native-console-time-polyfill';
 
-import { onPatch, onSnapshot, types } from 'mobx-state-tree';
+import { onPatch, onSnapshot, process, types } from 'mobx-state-tree';
 
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
@@ -9,52 +9,51 @@ import { observable } from 'mobx-react';
 const uuidv1 = require('uuid/v1');
 const moment = require('moment');
 
-export const EntryModel = types.model(
-    {
+export const EntryModel = types
+    .model('UsageEntry', {
         timestamp: types.Date,
         dose: types.number,
         notes: types.maybe(types.string),
         photo: types.maybe(types.string),
         routeOfAdministration: types.maybe(types.string),
-        measurement: types.string // TODO: Move to expandable enum or ref(? needs dedication to relational db :( )
-    },
-    {
+        measurement: types.string
+    })
+    .actions((self) => ({
         set(data) {
             for (var key in data) {
-                if (this.hasOwnProperty(key)) {
-                    this[key] = data[key];
+                if (self.hasOwnProperty(key)) {
+                    self[key] = data[key];
                 }
             }
         },
         setTimestamp(timestamp) {
-            this.timestamp = timestamp;
-            return this;
+            self.timestamp = timestamp;
+            return self;
         },
         setDose(dose) {
-            this.dose = dose;
-            return this;
+            self.dose = dose;
+            return self;
         },
         setNotes(notes) {
-            this.notes = notes;
-            return this;
+            self.notes = notes;
+            return self;
         },
         setPhoto(photo) {
-            this.photo = photo;
-            return this;
+            self.photo = photo;
+            return self;
         },
         setMeasurement(measurement) {
-            this.measurement = measurement;
-            return this;
+            self.measurement = measurement;
+            return self;
         },
         setRouteOfAdministration(roa) {
-            this.routeOfAdministration = roa;
-            return this;
+            self.routeOfAdministration = roa;
+            return self;
         }
-    }
-);
+    }));
 
-export const DrugTypeModel = types.model(
-    {
+export const DrugTypeModel = types
+    .model('DrugType', {
         id: types.identifier(),
         name: types.string,
         defaultMeasurement: types.string,
@@ -62,29 +61,31 @@ export const DrugTypeModel = types.model(
         defaultDose: types.maybe(types.number),
         defaultRouteOfAdministration: types.maybe(types.string),
         notes: types.maybe(types.string),
-        entries: types.array(EntryModel),
-        findLatestEntry() {
-            return _.orderBy(this.entries, ['timestamp'], ['desc'])[0];
+        entries: types.array(EntryModel)
+    })
+    .views((self) => ({
+        get latestEntry() {
+            return _.orderBy(self.entries, ['timestamp'], ['desc'])[0];
         },
         getEntriesForDate(date) {
             let dateMoment = moment(date);
-            return _.filter(this.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
+            return _.filter(self.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
         },
         getAverageTimeBetweenEntries(count) {
-            if (count > this.entries.length) {
-                count = this.entries.length;
+            if (count > self.entries.length) {
+                count = self.entries.length;
             }
 
-            let sortedEntries = _.sortBy(this.entries, (x) => x.timestamp);
+            let sortedEntries = _.sortBy(self.entries, (x) => x.timestamp);
             let timeBetween =
-                (_.last(sortedEntries).timestamp - sortedEntries[count - this.entries.length].timestamp) /
+                (_.last(sortedEntries).timestamp - sortedEntries[count - self.entries.length].timestamp) /
                 (sortedEntries.length - 1) /
                 1000.0;
 
             return timeBetween;
         },
         getLongestTimeBetweenEntries() {
-            let sortedEntries = _.sortBy(this.entries, (x) => x.timestamp);
+            let sortedEntries = _.sortBy(self.entries, (x) => x.timestamp);
             let longestTime = 0;
             for (var i = sortedEntries.length - 1; i > 0; i--) {
                 let time = sortedEntries[i].timestamp - sortedEntries[i - 1].timestamp;
@@ -94,38 +95,38 @@ export const DrugTypeModel = types.model(
             }
             return longestTime / 1000.0;
         }
-    },
-    {
+    }))
+    .actions((self) => ({
         set(data) {
             for (var key in data) {
-                if (this.hasOwnProperty(key)) {
-                    this[key] = data[key];
+                if (self.hasOwnProperty(key)) {
+                    self[key] = data[key];
                 }
             }
         },
         setName(name) {
-            this.name = name;
-            return this;
+            self.name = name;
+            return self;
         },
         setMeasurement(measurement) {
-            this.defaultMeasurement = measurement;
-            return this;
+            self.defaultMeasurement = measurement;
+            return self;
         },
         setPhotoUri(uri) {
-            this.photo = uri;
-            return this;
+            self.photo = uri;
+            return self;
         },
         setDefaultDose(dose) {
-            this.defaultDose = dose;
-            return this;
+            self.defaultDose = dose;
+            return self;
         },
         setDefaultRouteOfAdministration(roa) {
-            this.defaultRouteOfAdministration = roa;
-            return this;
+            self.defaultRouteOfAdministration = roa;
+            return self;
         },
         setNotes(notes) {
-            this.notes = notes;
-            return this;
+            self.notes = notes;
+            return self;
         },
         addEntry(timestamp, dose, measurement, notes, photo) {
             var entry = EntryModel.create({
@@ -135,48 +136,47 @@ export const DrugTypeModel = types.model(
                 notes: notes,
                 photo: photo
             });
-            this.entries.push(entry);
-            return this.entry;
+            self.entries.push(entry);
+            return self.entry;
         },
         addEntryFromData(data) {
             var entry = EntryModel.create(data);
-            this.entries.push(entry);
-            return this.entry;
+            self.entries.push(entry);
+            return self.entry;
         }
-    }
-);
+    }));
 
-const DomainStore = types.model(
-    'DomainStore',
-    {
-        isLoaded: false,
+const DomainStore = types
+    .model('DomainStore', {
+        isLoading: true,
         storageEndpoint: 'asyncStorage',
-        drugs: types.array(DrugTypeModel),
-
+        drugs: types.array(DrugTypeModel)
+    })
+    .views((self) => ({
         getDrugById(id) {
-            return _.find(this.drugs, (t) => t.id === id);
+            return _.find(self.drugs, (t) => t.id === id);
         },
         searchDrugsByName(name) {
             if (!name || name.length == 0) {
-                return this.drugs;
+                return self.drugs;
             }
-            return _.filter(this.drugs, (t) => t.name.toUpperCase().startsWith(name.toUpperCase()));
+            return _.filter(self.drugs, (t) => t.name.toUpperCase().startsWith(name.toUpperCase()));
         },
         getEntryById(id) {
-            return _.find(this.entries, (t) => t.id === id);
+            return _.find(self.entries, (t) => t.id === id);
         }
-    },
-    {
+    }))
+    .actions((self) => ({
         addDrugTypeFromData(data) {
             let dataClone = { ...data };
             dataClone['id'] = uuidv1();
             dataClone['entries'] = [];
             let newRecord = DrugTypeModel.create(dataClone);
-            this.drugs.push(newRecord);
+            self.drugs.push(newRecord);
             return newRecord;
         },
         addDrugType(name, measurement, photo) {
-            this.drugs.push(
+            self.drugs.push(
                 DrugTypeModel.create({
                     id: uuidv1(),
                     name: name,
@@ -187,53 +187,52 @@ const DomainStore = types.model(
             );
         },
         removeDrugType(id) {
-            this.drugs = this.drugs.filter((item) => item !== this.getDrugById(id));
+            self.drugs = self.drugs.filter((item) => item !== self.getDrugById(id));
         },
         clearAll() {
-            // BE CAREFUL WITH THIS! SERIOUSLY!
-            this.drugs.clear();
+            // BE CAREFUL WITH self! SERIOUSLY!
+            self.drugs.clear();
         },
         clearAllEntries() {
-            for (var drug in this.drugs) {
+            for (var drug in self.drugs) {
                 drug.entries = [];
             }
         },
         debugMassAdd(amount) {
             console.time('massAdd' + amount);
             for (var i = 0; i < amount; ++i) {
-                this.drugs.push(
+                self.drugs.push(
                     DrugTypeModel.create({ id: uuidv1(), name: uuidv1(), defaultMeasurement: 'g', photo: null })
                 );
             }
             console.timeEnd('massAdd' + amount);
         },
 
-        *fetchDrugs() {
+        fetchDrugs: process(function*() {
             // Async things must work as generators. Whatever.
             try {
                 // TODO: switch/fetch based on storageEndpoint
                 // TODO: abstract out in to class with standard interface
-                this.isLoaded = false;
-                this.drugs.clear();
+                self.isLoading = true;
+                self.drugs.clear();
                 console.time('fetchCabinet');
                 let storedDrugArray = yield AsyncStorage.getItem('DomainStore::drugs');
                 if (storedDrugArray !== null) {
                     storedDrugArray = JSON.parse(storedDrugArray);
                     if (storedDrugArray && storedDrugArray.length > 0) {
-                        this.drugs.push.apply(this.drugs, storedDrugArray);
+                        self.drugs.push.apply(self.drugs, storedDrugArray);
                     }
                 }
-                this.isLoaded = true;
+                self.isLoading = false;
             } catch (e) {
                 console.log(e);
             }
-            this.isLoaded = true;
+            self.isLoading = false;
             console.timeEnd('fetchCabinet');
 
-            return this.drugs.length;
-        }
-    }
-);
+            return self.drugs.length;
+        })
+    }));
 
 const storeInstance = DomainStore.create({ drugs: [], entries: [] });
 

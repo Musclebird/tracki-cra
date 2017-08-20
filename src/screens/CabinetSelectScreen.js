@@ -48,7 +48,7 @@ export default class CabinetSelectScreen extends React.Component {
 
     _renderItem(item) {
         var storeEntry = this.state.store.getDrugById(item.id);
-        var lastEntry = storeEntry.findLatestEntry();
+        var lastEntry = storeEntry.latestEntry;
         return (
             <DrugCard
                 name={item.name}
@@ -63,7 +63,7 @@ export default class CabinetSelectScreen extends React.Component {
     }
 
     render() {
-        if (!this.state.store.isLoaded) {
+        if (this.state.store.isLoading) {
             return (
                 <Container
                     style={{
