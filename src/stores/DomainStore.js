@@ -72,6 +72,14 @@ export const DrugTypeModel = types
             return _.filter(self.entries, (t) => moment(t.timestamp).isSame(dateMoment, 'day'));
         },
         getAverageTimeBetweenEntries(count) {
+            if(self.entries == null || self.entries.length <= 0) {
+                return -1;
+            }
+
+            if(self.entries.length == 1) {
+                return moment().unix() - self.entries[0].timestamp
+            }
+
             if (count > self.entries.length) {
                 count = self.entries.length;
             }
