@@ -16,8 +16,18 @@ export const EntryModel = types
         notes: types.maybe(types.string),
         photo: types.maybe(types.string),
         routeOfAdministration: types.maybe(types.string),
-        measurement: types.string
+        measurement: types.string,
+        halflifeNotification: types.maybe(types.boolean)
     })
+    .views((self) => ({
+        calculatePlasmaConcentration(halflifeTime) {
+            let hoursPassed = moment().diff(moment.unix(self.timestamp), 'hours', true);
+            let doseRemaining = self.dose * 0.5 ^(hoursPassed / halflifeTime);
+            let currentConcentrationPercent = doseRemaining / self.dose * 100;
+
+            return currentConcentrationPercent;
+        }
+    }))
     .actions((self) => ({
         set(data) {
             for (var key in data) {
@@ -61,6 +71,8 @@ export const DrugTypeModel = types
         defaultDose: types.maybe(types.number),
         defaultRouteOfAdministration: types.maybe(types.string),
         notes: types.maybe(types.string),
+        halflife: types.maybe(types.number),
+        eliminationWarning: types.maybe(types.boolean),
         entries: types.array(EntryModel)
     })
     .views((self) => ({
@@ -134,6 +146,10 @@ export const DrugTypeModel = types
         },
         setNotes(notes) {
             self.notes = notes;
+            return self;
+        },
+        setHalflife(halflife) {
+            self.halflife = halflife;
             return self;
         },
         addEntry(timestamp, dose, measurement, notes, photo) {
