@@ -1,17 +1,18 @@
 import { Body, Container, Content, Icon, Left, List, ListItem, Right, Text, Thumbnail } from 'native-base';
 import { Button, StyleSheet, View } from 'react-native';
 
-import DatePicker from 'react-native-datepicker';
 import { default as DomainStore } from '../stores/DomainStore';
 import React from 'react';
 import { Spinner } from 'native-base';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
-
+import CalendarStrip from 'react-native-calendar-strip';
+import { LinearGradient } from 'expo';
 @observer
 export default class EntryScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
-        title: 'Entries',
+        title: "Entries",
+        header: null,
         headerRight: <Button title="Add" onPress={() => navigation.navigate('CabinetSelect')} />,
 
         tabBarIcon: ({ tintColor }) => (
@@ -50,25 +51,13 @@ export default class EntryScreen extends React.Component {
         });
 
         return (
-            <Content>
-                <DatePicker
-                    date={this.state.selectedDate}
-                    mode="date"
-                    placeholder="select date"
-                    confirmBtnText="Confirm"
-                    showIcon={false}
-                    style={{
-                        alignSelf: 'stretch',
-                        width: '100%'
-                    }}
-                    duration={200}
-                    minDate="2016-01-01"
-                    maxDate={new Date()}
-                    cancelBtnText="Cancel"
-                    onDateChange={(date) => {
-                        this.setState({ selectedDate: date });
-                    }}
-                />
+                <LinearGradient           colors={['#67B26F', '#4ca2cd']}
+>
+            <CalendarStrip                     style={{height: 100, paddingTop: 20, paddingBottom: 10}}
+                                calendarHeaderStyle={{color: 'white'}}
+                                calendarAnimation={{type: 'sequence', duration: 30}}
+/>
+    <Content style={{backgroundColor: "transparent"}}>
                 <List>
                     {todayEntry.map((x) => {
                         var photoUri = x[0].photo || x[1].photo || null;
@@ -99,6 +88,7 @@ export default class EntryScreen extends React.Component {
                     })}
                 </List>
             </Content>
+            </LinearGradient>
         );
     }
 }

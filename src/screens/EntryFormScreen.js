@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import { default as DomainStore } from '../stores/DomainStore';
 import { ImagePicker } from 'expo';
 import { NavigationActions } from 'react-navigation';
@@ -169,7 +168,7 @@ export default class EntryFormScreen extends Component {
                         <Col>
                             <Item stackedLabel>
                                 <Label>Time of entry</Label>
-
+{/*
                                 <DatePicker
                                     date={this.state.timestamp}
                                     mode="datetime"
@@ -188,6 +187,7 @@ export default class EntryFormScreen extends Component {
                                         this.setState({ timestamp: date });
                                     }}
                                 />
+                                */}
                             </Item>
                         </Col>
                     </Row>

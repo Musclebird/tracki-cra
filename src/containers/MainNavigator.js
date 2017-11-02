@@ -11,7 +11,7 @@ import { StackNavigator, TabNavigator } from 'react-navigation';
 
 let styles = StyleSheet.create({
     tabStyle: {
-        backgroundColor: 'rgba(247, 247, 247, 255)'
+        backgroundColor: 'rgba(247, 247, 247, 0)'
     },
     headerStyle: {
         backgroundColor: 'rgba(247, 247, 247, 255)'
