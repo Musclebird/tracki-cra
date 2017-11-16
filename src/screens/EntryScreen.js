@@ -69,7 +69,7 @@ export default class EntryScreen extends React.Component {
     });
 
     return (
-      <LinearGradient colors={["#67B26F", "#4ca2cd"]}>
+      <View>
         <CalendarStrip
           style={{
             height: 100,
@@ -113,7 +113,7 @@ export default class EntryScreen extends React.Component {
             })}
           </List>
         </Content>
-      </LinearGradient>
+      </View>
     );
   }
 }

@@ -30,6 +30,7 @@
         "react-native-console-time-polyfill": "^0.0.6",
         "react-native-elements": "^0.17.0",
         "react-native-flip-card": "^3.5.2",
+        "react-native-iphone-x-helper": "^1.0.1",
         "react-native-search-box": "^0.0.13",
         "react-native-status-bar-height": "^1.0.1",
         "react-native-svg": "^5.4.2",
