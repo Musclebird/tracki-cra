@@ -1,5 +1,5 @@
 import {
-    AboutScreen,
+    SettingsScreen,
     CabinetFormScreen,
     CabinetScreen,
     CabinetSelectScreen,
@@ -22,12 +22,12 @@ const MainNavigator = TabNavigator(
     {
         Entries: { screen: EntryScreen },
         Cabinet: { screen: CabinetScreen },
-        About: { screen: AboutScreen }
+        Settings: { screen: SettingsScreen }
     },
     {
         tabBarOptions: {
             style: styles.tabStyle,
-            order: ['Entries', 'Cabinet', 'About']
+            order: ['Entries', 'Cabinet', 'Settings']
         }
     }
 );

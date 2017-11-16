@@ -1,4 +1,4 @@
-export { default as AboutScreen } from './AboutScreen';
+export { default as SettingsScreen } from './SettingsScreen';
 export { default as CabinetFormScreen } from './CabinetFormScreen';
 export { default as CabinetScreen } from './CabinetScreen';
 export { default as CabinetSelectScreen } from './CabinetSelectScreen';
