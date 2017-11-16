@@ -19,7 +19,7 @@ import _ from "lodash";
 import { observer } from "mobx-react";
 import CalendarStrip from "react-native-calendar-strip";
 import { LinearGradient } from "expo";
-import { ifIphoneX } from "react-native-iphone-x-helper";
+import { isIphoneX } from "react-native-iphone-x-helper";
 
 @observer
 export default class EntryScreen extends React.Component {
@@ -67,13 +67,15 @@ export default class EntryScreen extends React.Component {
     todayEntry = _.sortBy(todayEntry, function(item) {
       return item[0].timestamp;
     });
-
     return (
-      <View>
+      <View
+        style={{
+          paddingTop: isIphoneX() ? 40 : 20
+        }}
+      >
         <CalendarStrip
           style={{
             height: 100,
-            paddingTop: ifIPhoneX ? 50 : 20,
             paddingBottom: 10
           }}
           calendarHeaderStyle={{ color: "white" }}
