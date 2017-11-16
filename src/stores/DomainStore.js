@@ -1,6 +1,6 @@
 import 'react-native-console-time-polyfill';
 
-import { onPatch, onSnapshot, process, types } from 'mobx-state-tree';
+import { onPatch, onSnapshot, flow, types } from 'mobx-state-tree';
 
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
@@ -216,7 +216,7 @@ const DomainStore = types
             console.timeEnd('massAdd' + amount);
         },
 
-        fetchDrugs: process(function*() {
+        fetchDrugs: flow(function*() {
             // Async things must work as generators. Whatever.
             try {
                 // TODO: switch/fetch based on storageEndpoint
