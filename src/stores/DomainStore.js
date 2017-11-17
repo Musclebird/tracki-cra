@@ -1,10 +1,17 @@
 import "react-native-console-time-polyfill";
 
-import { onPatch, onSnapshot, flow, types } from "mobx-state-tree";
-
+import {
+  onPatch,
+  onSnapshot,
+  flow,
+  types,
+  getParent,
+  getSnapshot,
+  applySnapshot
+} from "mobx-state-tree";
+import { when, reaction } from "mobx";
 import { AsyncStorage } from "react-native";
 import _ from "lodash";
-import { observable } from "mobx-react";
 
 const uuidv1 = require("uuid/v1");
 const moment = require("moment");
@@ -180,6 +187,20 @@ const DomainStore = types
     }
   }))
   .actions(self => ({
+    afterCreate() {
+      self.fetchDrugs();
+      when(
+        () => !this.isLoading,
+        () => {
+          reaction(
+            () => getSnapshot(self),
+            json => {
+              AsyncStorage.setItem("TrackiStore", JSON.stringify(json));
+            }
+          );
+        }
+      );
+    },
     addDrugTypeFromData(data) {
       let dataClone = { ...data };
       dataClone["id"] = uuidv1();
@@ -227,45 +248,16 @@ const DomainStore = types
     },
 
     fetchDrugs: flow(function*() {
-      // Async things must work as generators. Whatever.
-      try {
-        // TODO: switch/fetch based on storageEndpoint
-        // TODO: abstract out in to class with standard interface
-        self.isLoading = true;
-        self.drugs.clear();
-        console.time("fetchCabinet");
-        let storedDrugArray = yield AsyncStorage.getItem("DomainStore::drugs");
-        if (storedDrugArray !== null) {
-          storedDrugArray = JSON.parse(storedDrugArray);
-          if (storedDrugArray && storedDrugArray.length > 0) {
-            self.drugs.push.apply(self.drugs, storedDrugArray);
-          }
-        }
-        self.isLoading = false;
-      } catch (e) {
-        console.log(e);
+      self.isLoading = true;
+      let data = yield AsyncStorage.getItem("TrackiStore");
+      if (data) {
+        applySnapshot(self, JSON.parse(data));
       }
       self.isLoading = false;
-      console.timeEnd("fetchCabinet");
-
       return self.drugs.length;
     })
   }));
 
-const storeInstance = DomainStore.create({ drugs: [], entries: [] });
-
-storeInstance.fetchDrugs().then(() => {
-  onSnapshot(storeInstance, snapshot => {
-    if (snapshot.storageEndpoint == "asyncStorage" && snapshot.isLoaded) {
-      console.time("asyncStorage");
-      AsyncStorage.setItem(
-        "DomainStore::drugs",
-        JSON.stringify(snapshot.drugs)
-      ).then(() => {
-        console.timeEnd("asyncStorage");
-      });
-    }
-  });
-});
+const storeInstance = DomainStore.create({ drugs: [] });
 
 export default storeInstance;
