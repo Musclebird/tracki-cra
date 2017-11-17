@@ -55,6 +55,7 @@ export default class EntryScreen extends React.Component {
     if (this.state.store.isLoading) {
       return <Spinner />;
     }
+
     var todayEntry = [];
     this.state.store.drugs.map(drug => {
       drug.getEntriesForDate(this.state.selectedDate).map(x => {
@@ -67,19 +68,20 @@ export default class EntryScreen extends React.Component {
     todayEntry = _.sortBy(todayEntry, function(item) {
       return item[0].timestamp;
     });
+
     return (
-      <View
-        style={{
-          paddingTop: isIphoneX() ? 40 : 20
-        }}
-      >
+      <View>
         <CalendarStrip
           style={{
-            height: 100,
-            paddingBottom: 10
+            height: isIphoneX() ? 120 : 100,
+            paddingTop: isIphoneX() ? 50 : 20,
+            paddingBottom: 10,
+            backgroundColor: "white"
           }}
-          calendarHeaderStyle={{ color: "white" }}
           calendarAnimation={{ type: "sequence", duration: 30 }}
+          onDateSelected={date => {
+            this.setState({ selectedDate: date });
+          }}
         />
         <Content style={{ backgroundColor: "transparent" }}>
           <List>

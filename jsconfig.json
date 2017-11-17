@@ -1,5 +1,6 @@
 {
-    "compilerOptions": {
-        "experimentalDecorators": true
-    }
+  "compilerOptions": {
+    "target": "ES6",
+    "experimentalDecorators": true
+  }
 }

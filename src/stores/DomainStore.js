@@ -4,7 +4,6 @@ import { onPatch, onSnapshot, flow, types } from "mobx-state-tree";
 
 import { AsyncStorage } from "react-native";
 import _ from "lodash";
-import { observable } from "mobx-react";
 
 const uuidv1 = require("uuid/v1");
 const moment = require("moment");
